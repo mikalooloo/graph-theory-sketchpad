@@ -3,6 +3,11 @@ import { toPng } from 'html-to-image';
 import format from 'date-fns/format';
 import Button from 'react-bootstrap/Button';
 
+/*
+ * When clicked, will download a PNG of a component
+ * props:
+ *   downloadRef - what component to download
+ */
 export default function DownloadButton(props) {
     const getFileName = (fileType) => `${format(new Date(), "'GraphTheorySketchpad-'HH-mm-ss")}.${fileType}`;
 
