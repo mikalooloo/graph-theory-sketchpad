@@ -1,0 +1,13 @@
+.light-sketchpad {
+  background-color: white;
+  border-style: dotted;
+  margin: auto;
+}
+
+.dark-sketchpad {
+  background-color: black;
+  border-style: double;
+  margin: auto;
+}
+
+/*# sourceMappingURL=sketchpad.css.map */
