@@ -3,7 +3,7 @@ import '../aesthetic/sketchpad.css';
 import React from 'react';
 import { ThemeContext } from '../aesthetic/theme';
 
-import { Stage, Layer, Group, Circle, Rect, Line, Text } from 'react-konva';
+import { Stage, Layer, Group, Circle, Rect, Line } from 'react-konva';
 
 /*
  * Sketchpad where vertices and edges can be fiddled with
@@ -78,7 +78,7 @@ export default function Sketchpad({ mode, color, setVertexCount, setEdgeCount, h
                     onEdgeRecolor(e, false);
                 }
                 else if (e.evt.button === 1) {
-                    onVertexRecolor(e, true);
+                    onEdgeRecolor(e, true);
                 }
                 break;
             default:
@@ -107,10 +107,6 @@ export default function Sketchpad({ mode, color, setVertexCount, setEdgeCount, h
             return vertex.isDragging === true;
         })[0];
 
-        const childVertex = e.target.getChildren((child) => {
-            return child.getClassName() === "Circle";
-        })[0];
-
         if (vertexMoving !== undefined) {
             setEdges(
                 edges.map((edge) => {
@@ -119,22 +115,22 @@ export default function Sketchpad({ mode, color, setVertexCount, setEdgeCount, h
                         if (edge.adjacencies[0] === edge.adjacencies[1]) {
                             return {
                                 ...edge,
-                                points: [e.target.position().x + childVertex.position().x + edge.offset[0], e.target.position().y + childVertex.position().y + edge.offset[1],
-                                e.target.position().x + childVertex.position().x + edge.offset[4], e.target.position().y + childVertex.position().y + edge.offset[5],
-                                e.target.position().x + childVertex.position().x + edge.offset[2], e.target.position().y + childVertex.position().y + edge.offset[3]]
+                                points: [e.target.position().x + edge.offset[0], e.target.position().y + edge.offset[1],
+                                e.target.position().x + edge.offset[4], e.target.position().y + edge.offset[5],
+                                e.target.position().x + edge.offset[2], e.target.position().y + edge.offset[3]]
                             };
                         }
                         // else if not a loop, which end are we moving?
                         else if (vertexMoving.id === edge.adjacencies[0]) {
                             return {
                                 ...edge,
-                                points: [e.target.position().x + childVertex.position().x + edge.offset[0], e.target.position().y + childVertex.position().y + edge.offset[1], edge.points[2], edge.points[3]]
+                                points: [e.target.position().x + edge.offset[0], e.target.position().y + edge.offset[1], edge.points[2], edge.points[3]]
                             };
                         }
                         else {
                             return {
                                 ...edge,
-                                points: [edge.points[0], edge.points[1], e.target.position().x + childVertex.position().x + edge.offset[2], e.target.position().y + childVertex.position().y + edge.offset[3]]
+                                points: [edge.points[0], edge.points[1], e.target.position().x + edge.offset[2], e.target.position().y + edge.offset[3]]
                             };
                         }
                     }
@@ -355,37 +351,23 @@ export default function Sketchpad({ mode, color, setVertexCount, setEdgeCount, h
                     )) : <Group />}
 
                     {vertices.length !== 0 ? vertices.map((vertex) => (
-                        <Group
-                            draggable
+                        <Circle
                             key={vertex.id}
                             id={vertex.id}
+                            name={"vertex"}
+                            x={vertex.x}
+                            y={vertex.y}
+                            radius={vertex.radius}
+                            fill={vertex.color}
+                            scaleX={vertex.isDragging ? 1.2 : 1}
+                            scaleY={vertex.isDragging ? 1.2 : 1}
+                            perfectDrawEnabled={false}
+                            draggable
                             onDragStart={onVertexDragStart}
                             onDragEnd={onVertexDragEnd}
                             onDragMove={onVertexDragMove}
                             onMouseDown={onVertexClick}
-                        >
-                            <Circle
-                                id={vertex.id}
-                                name={"vertex"}
-                                x={vertex.x}
-                                y={vertex.y}
-                                radius={vertex.radius}
-                                fill={vertex.color}
-                                scaleX={vertex.isDragging ? 1.2 : 1}
-                                scaleY={vertex.isDragging ? 1.2 : 1}
-                                perfectDrawEnabled={false}
-                            />
-                            <Text
-                                id={vertex.id}
-                                name={"text"}
-                                x={vertex.x}
-                                y={vertex.y}
-                                text={vertex.id}
-                                fontSize={30}
-                                fill={vertex.textColor}
-                                perfectDrawEnabled={false}
-                            />
-                        </Group>
+                        />
                     )) : <Group />}
                 </Layer>
             </Stage>
